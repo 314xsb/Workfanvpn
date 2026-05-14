@@ -72,7 +72,7 @@ class ClashProxyRenamer:
             pass
     
        
-    def download_config(self, url, timeout=15, max_retries=4):
+    def download_config(self, url, timeout=8, max_retries=4):
         """下载单个YAML配置文件，支持重试（最多额外重试4次）"""
         
         from requests.exceptions import RequestException
