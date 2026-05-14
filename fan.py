@@ -18,8 +18,8 @@ from Crypto.Hash import SHA1
 from bs4 import BeautifulSoup
 from datetime import datetime
 
-yaml_file_tmp = "./File/tmp_fanvpn.yaml"
-yaml_file_dst = "./File/fanvpn.yaml"
+yaml_file_tmp = "./File/tmp_fan.yaml"
+yaml_file_dst = "./File/fan.yaml"
 
 # ---------- 1. 配置参数 ----------
 BACKGROUND_JS_PATH = "./background.js"   # background.js 
