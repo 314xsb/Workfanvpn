@@ -2,7 +2,7 @@ name: Run Python Scripts Daily
 
 on:
   schedule:
-    - cron: '0 */2 * * *'   # 每2小时运行一次
+    - cron: '0 */8 * * *'   # 每8小时一次， 0:00, 8:00, 16:00（UTC 时间）
   workflow_dispatch:   # 允许手动点击按钮触发（用于测试）
 
 jobs:
