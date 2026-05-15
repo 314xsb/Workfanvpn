@@ -2,7 +2,7 @@ name: Run Python Scripts Daily
 
 on:
   schedule:
-    - cron: '0 */2 * * *'   # 每2小时运行一次
+    - cron: '0 */8 * * *'   # 每8小时一次， 0:00, 8:00, 16:00（UTC 时间）
   workflow_dispatch:   # 允许手动点击按钮触发（用于测试）
 
 jobs:
@@ -25,15 +25,15 @@ jobs:
           # 如果没有 requirements.txt，也可以直接在这里写 pip install requests PyYAML pycryptodome
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
           
-      - name: Run Yaml_Go.py
-        run: python Yaml_Go.py
+      - name: Run go.py
+        run: python go.py
 
-      - name: Run Yaml_FanVPN.py
-        run: python Yaml_FanVPN.py
+      - name: Run fan.py
+        run: python fan.py
         
       - name: Push Changes
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add File/fanvpn.yaml File/go.yaml
+          git add File/fan.yaml File/go.yaml
           git diff --quiet && git diff --staged --quiet || (git commit -m "Update configs" && git push)

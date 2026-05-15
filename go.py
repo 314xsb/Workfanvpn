@@ -71,22 +71,35 @@ class ClashProxyRenamer:
         except:
             pass
     
-    def download_config(self, url, timeout=15):
-        """下载单个YAML配置文件"""
-        try:
-            headers = {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-                'Accept': 'application/x-yaml,text/yaml,text/plain,*/*'
-            }
-            response = requests.get(url, headers=headers, timeout=timeout)
-            response.raise_for_status()
-            
-            # 尝试解析YAML
-            config = yaml.safe_load(response.text)
-            return config
-        except Exception as e:
-            print(f"❌ 下载失败 {url}: {str(e)}")
-            return None
+       
+    def download_config(self, url, timeout=8, max_retries=4):
+        """下载单个YAML配置文件，支持重试（最多额外重试4次）"""
+        
+        from requests.exceptions import RequestException
+
+        for attempt in range(max_retries + 1):
+            try:
+                headers = {
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+                    'Accept': 'application/x-yaml,text/yaml,text/plain,*/*'
+                }
+                response = requests.get(url, headers=headers, timeout=timeout)
+                response.raise_for_status()
+
+                # 尝试解析YAML
+                config = yaml.safe_load(response.text)
+                return config
+
+            except Exception as e:
+                # 如果是最后一次尝试，打印失败信息并返回None
+                if attempt == max_retries:
+                    print(f"❌ 下载失败，已重试 {max_retries} 次: {url} -> {str(e)}")
+                    return None
+
+                # 非最后一次：计算等待时间（指数退避，例如 1s, 2s, 4s, 8s）
+                wait = 2 ** attempt
+                print(f"⚠️ 下载失败 ({url})，{wait}秒后进行第 {attempt+1}/{max_retries} 次重试... 错误: {str(e)}")
+                time.sleep(wait)   
     
     def extract_proxies_from_config(self, config, source_url):
         """从配置中提取proxies节点"""
@@ -113,30 +126,36 @@ class ClashProxyRenamer:
             #proxy['_source'] = source_url
         
         return proxies
-    
+      
+        
     def download_all_configs(self, urls, max_workers=5):
-        """并发下载多个配置文件"""
+        """并发下载，但最终结果按 urls 顺序排列"""
+        from concurrent.futures import ThreadPoolExecutor, as_completed
+
         all_proxies = []
-        
-        print(f"\n📥 开始下载 {len(urls)} 个配置文件...\n")
-        
+        print(f"\n📥 开始并发下载 {len(urls)} 个配置文件...\n")
+
+        # 提交所有任务，保存 future 与 url 的对应关系
         with ThreadPoolExecutor(max_workers=max_workers) as executor:
             future_to_url = {executor.submit(self.download_config, url): url for url in urls}
             
+            # 等待所有任务完成，收集结果到字典
+            results = {}
             for future in as_completed(future_to_url):
                 url = future_to_url[future]
-                try:
-                    config = future.result()
-                    if config:
-                        proxies = self.extract_proxies_from_config(config, url)
-                        all_proxies.extend(proxies)
-                        print(f"✅ 成功: {url[:60]}... -> 获取 {len(proxies)} 个节点")
-                    else:
-                        print(f"⚠️  失败: {url[:60]}...")
-                except Exception as e:
-                    print(f"❌ 错误: {url[:60]}... -> {str(e)}")
+                results[url] = future.result()  # 可能为 None
+            
+        # 按原始 urls 顺序处理结果
+        for url in urls:
+            config = results.get(url)
+            if config:
+                proxies = self.extract_proxies_from_config(config, url)
+                all_proxies.extend(proxies)
+                print(f"✅ 成功: {url[:60]}... -> 获取 {len(proxies)} 个节点")
+            else:
+                print(f"⚠️  失败: {url[:60]}...")
         
-        return all_proxies
+        return all_proxies    
     
     def parse_server_to_ip(self, server):
         """将server字段解析为IP地址"""

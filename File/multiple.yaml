@@ -71,7 +71,7 @@ proxy-providers:
 
   FanVPN:
     type: http 
-    url:  https://cdn.jsdelivr.net/gh/xiagd/Work@main/File/fanvpn.yaml
+    url:  https://cdn.jsdelivr.net/gh/xiagd/Work@main/File/fan.yaml
     path: ./FanVPN.yaml
     #更新间隔单位是秒
     interval: 3600 # 1小时更新
@@ -126,7 +126,7 @@ proxy-groups:
   - 负载均衡_FanVPN
   #- DIRECT
  
- 
+
  #=======================================
 - name: 自动选择
   type: url-test 
