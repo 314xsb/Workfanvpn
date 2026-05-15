@@ -126,7 +126,7 @@ proxy-groups:
   - 负载均衡_FanVPN
   #- DIRECT
  
- 
+
  #=======================================
 - name: 自动选择
   type: url-test 
