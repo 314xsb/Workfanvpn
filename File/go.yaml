@@ -160,8 +160,8 @@ proxies:
   skip-cert-verify: true
   congestion-controller: bbr
 - name: 🇫🇷法国1
-  server: 163.172.116.154
-  port: 33887
+  server: 62.210.24.143
+  port: 33888
   type: tuic
   uuid: 9adb384a-0f16-4501-a8f3-b6b2556fce87
   password: dongtaiwang.com
@@ -173,8 +173,8 @@ proxies:
   skip-cert-verify: true
   congestion-controller: bbr
 - name: 🇫🇷法国2
-  server: 163.172.116.154
-  port: 33887
+  server: 62.210.24.143
+  port: 33888
   type: tuic
   uuid: 9adb384a-0f16-4501-a8f3-b6b2556fce87
   password: dongtaiwang.com
@@ -199,6 +199,18 @@ proxies:
   skip-cert-verify: true
   congestion-controller: bbr
 - name: 🇫🇷法国4
+  type: hysteria
+  server: 163.172.117.163
+  port: 36699
+  auth-str: dongtaiwang.com
+  sni: bing.com
+  skip-cert-verify: true
+  alpn:
+  - h3
+  protocol: udp
+  up: 11 Mbps
+  down: 55 Mbps
+- name: 🇫🇷法国5
   server: ip1.758733.xyz
   port: 10088
   type: tuic
@@ -211,32 +223,18 @@ proxies:
   udp-relay-mode: native
   skip-cert-verify: true
   congestion-controller: bbr
-- name: 🇫🇷法国5
-  server: 163.172.116.154
-  port: 33887
-  type: tuic
-  uuid: 9adb384a-0f16-4501-a8f3-b6b2556fce87
-  password: dongtaiwang.com
-  sni: bing.com
-  alpn:
-  - h3
-  request-timeout: 8000
-  udp-relay-mode: native
-  skip-cert-verify: true
-  congestion-controller: bbr
 - name: 🇫🇷法国6
-  server: 163.172.116.154
-  port: 33887
-  type: tuic
-  uuid: 9adb384a-0f16-4501-a8f3-b6b2556fce87
-  password: dongtaiwang.com
+  type: hysteria
+  server: 163.172.117.163
+  port: 36699
+  auth-str: dongtaiwang.com
   sni: bing.com
+  skip-cert-verify: true
   alpn:
   - h3
-  request-timeout: 8000
-  udp-relay-mode: native
-  skip-cert-verify: true
-  congestion-controller: bbr
+  protocol: udp
+  up: 11 Mbps
+  down: 55 Mbps
 - name: 🌍未知1
   type: hysteria
   server: 2a14:7584:d097::a
